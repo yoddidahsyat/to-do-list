@@ -251,11 +251,11 @@ const Detail = () => {
                         <Dropdown onSelect={handleSort}>
                             <Dropdown.Toggle as={SortButton} />
                             <Dropdown.Menu>
-                                <Dropdown.Item as="button" eventKey='latest' className='d-flex align-items-center' data-cy='sort-latest'>Terbaru</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='oldest' className='d-flex align-items-center' data-cy='sort-oldest'>Terlama</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='az' className='d-flex align-items-center' data-cy='sort-az'>A-Z</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='za' className='d-flex align-items-center' data-cy='sort-za'>Z-A</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='unfinished' className='d-flex align-items-center' data-cy='sort-unfinished'>Belum Selesai</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='latest' className='d-flex align-items-center' data-cy='sort-selection'>Terbaru</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='oldest' className='d-flex align-items-center' data-cy='sort-selection'>Terlama</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='az' className='d-flex align-items-center' data-cy='sort-selection'>A-Z</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='za' className='d-flex align-items-center' data-cy='sort-selection'>Z-A</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='unfinished' className='d-flex align-items-center' data-cy='sort-selection'>Belum Selesai</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                         <AddButton onClick={handleAddItem} data-cy='todo-add-button' />
