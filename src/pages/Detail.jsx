@@ -66,12 +66,14 @@ const Detail = () => {
     const navigate = useNavigate()
     const goBack = () => navigate('/')
 
-    const toggleChangeTitle = () => {
-        setOnTitleChange(!onTitleChange)
+    const toggleChangeTitle = () => setOnTitleChange(!onTitleChange)
+    useEffect(()=>{
         if (onTitleChange) {
+            document.getElementById('todo-title-input').focus()
+        } else {
             changeTitle()
         }
-    }
+    }, [onTitleChange])
 
     const handleChangeTitle = (e) => {
         setTitle(e.target.value)
@@ -189,8 +191,8 @@ const Detail = () => {
                     <div className='d-flex align-items-center py-1'>
                         <img src={back} alt='back' role='button' onClick={goBack} data-cy='todo-back-button' />
                         {
-                            !onTitleChange ? <h1 className='fw-bold fs-36 mb-0 mx-3' data-cy='todo-title'>{title}</h1> :
-                            <input value={title} className='input-title mx-3' onChange={handleChangeTitle} />
+                            !onTitleChange ? <h1 className='fw-bold fs-36 mb-0 mx-3' data-cy='todo-title' onClick={toggleChangeTitle}>{title}</h1> :
+                            <input id='todo-title-input' value={title} className='input-title mx-3' onChange={handleChangeTitle} onBlur={toggleChangeTitle} />
                         }
                         <img src={edit} alt='edit' role='button' onClick={toggleChangeTitle} data-cy='todo-title-edit-button' />
                     </div>

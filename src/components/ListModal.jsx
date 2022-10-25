@@ -52,6 +52,7 @@ const ListModal = ({show, hide, confirm, data, type}) => {
                 e.preventDefault();
                 onClick(e);
             }}
+            data-cy={`${type}-priority-dropdown`}
             >
             <div className='d-flex align-items-center'>
                 <div className={`icon-priority bg-${color}`} />
@@ -83,7 +84,7 @@ const ListModal = ({show, hide, confirm, data, type}) => {
                     <Form.Group className='my-3' controlId="priority">
                         <Form.Label className='fs-12 fw-semibold' data-cy={`${type}-priority-title`}>PRIORITY</Form.Label>
                         <Dropdown variant='white' id="dropdown-item-button" onSelect={handleChangePriority}>
-                            <Dropdown.Toggle as={CustomToggle} data-cy={`${type}-priority-dropdown`} />
+                            <Dropdown.Toggle as={CustomToggle} />
                             <Dropdown.Menu>
                                 {priorities.map(({label, color, key}) => 
                                     <Dropdown.Item as="button" key={key} eventKey={key} className='d-flex align-items-center' data-cy={`${type}-priority-${key}`}><div className={`icon-priority bg-${color}`} />{label}</Dropdown.Item>

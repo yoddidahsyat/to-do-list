@@ -64,7 +64,7 @@ const Dashboard = () => {
         <div className='container py-5'>
             <div className="row">
                 <div className="col d-flex justify-content-between">
-                    <h1 className='fw-bold fs-36' data-cy='activity-title'>Activities</h1>
+                    <h1 className='fw-bold fs-36' data-cy='activity-title'>Activity</h1>
                     <AddButton onClick={() => addActivity()} data-cy='activity-add-button' />
                 </div>
             </div>
