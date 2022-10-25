@@ -178,7 +178,7 @@ const Detail = () => {
 
     const showAlert = () => {
         setAlert(true)
-        setTimeout(hideAlert, 2000)
+        setTimeout(hideAlert, 1000)
     }
     const hideAlert = () => setAlert(false)
 

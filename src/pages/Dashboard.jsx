@@ -11,7 +11,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(false)
     const [alert, setAlert] = useState(false)
 
-    const fetchActivities = async () => {
+    const getActivities = async () => {
         try {
             setLoading(true);
             const response = await API("/activity-groups?email=contoh%40yoddidahsyat.site");
@@ -23,7 +23,7 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        fetchActivities();
+        getActivities();
     }, []);
 
     const addActivity = async () => {
@@ -34,8 +34,11 @@ const Dashboard = () => {
         try {
             setLoading(true);
             const response = await API.post("/activity-groups", body);
-            const {id, title, createdAt} = response.data
-            setActivities([ ...activities, { id, title, createdAt } ]);
+            // const {id, title, createdAt} = response.data
+            if(response.status === 201){
+                getActivities()
+            }
+            // setActivities([ ...activities, { id, title, createdAt } ]);
             setLoading(false);
         } catch (err) {
             console.log(err);
@@ -48,7 +51,7 @@ const Dashboard = () => {
             await API.delete(`/activity-groups/${id}`);
             showAlert('activity')
             setLoading(false);
-            fetchActivities()
+            getActivities()
         } catch (err) {
             console.log(err);
         }
@@ -56,7 +59,7 @@ const Dashboard = () => {
 
     const showAlert = () => {
         setAlert(true)
-        setTimeout(hideAlert, 2000)
+        setTimeout(hideAlert, 1000)
     }
     const hideAlert = () => setAlert(false)
 

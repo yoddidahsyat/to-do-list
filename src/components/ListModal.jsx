@@ -28,6 +28,15 @@ const ListModal = ({show, hide, confirm, data, type}) => {
         }
     }, [data])
 
+    useEffect(()=>{
+        if(!show){
+            setForm({
+                title: '',
+                priority: 'very-high'
+            })
+        }
+    }, [show])
+
     const handleChangeTitle = (event) => {
         setForm({
             ...form,
@@ -87,7 +96,7 @@ const ListModal = ({show, hide, confirm, data, type}) => {
                             <Dropdown.Toggle as={CustomToggle} />
                             <Dropdown.Menu>
                                 {priorities.map(({label, color, key}) => 
-                                    <Dropdown.Item as="button" key={key} eventKey={key} className='d-flex align-items-center' data-cy={`${type}-priority-${key}`}><div className={`icon-priority bg-${color}`} />{label}</Dropdown.Item>
+                                    <Dropdown.Item as="button" key={key} eventKey={key} className='d-flex align-items-center' data-cy={`${type}-priority-item`}><div className={`icon-priority bg-${color}`} />{label}</Dropdown.Item>
                                 )}
                             </Dropdown.Menu>
                         </Dropdown>
