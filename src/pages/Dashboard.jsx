@@ -64,15 +64,15 @@ const Dashboard = () => {
         <div className='container py-5'>
             <div className="row">
                 <div className="col d-flex justify-content-between">
-                    <h1 className='fw-bold fs-36'>Activities</h1>
-                    <AddButton onClick={() => addActivity()} />
+                    <h1 className='fw-bold fs-36' data-cy='activity-title'>Activities</h1>
+                    <AddButton onClick={() => addActivity()} data-cy='activity-add-button' />
                 </div>
             </div>
             <div className="row mt-5">
             { loading ? <Loading /> : 
             activities.length < 1 ?
                 <div className="col text-center">
-                    <img src={emptyStateImage} alt='Activity empty' />
+                    <img src={emptyStateImage} alt='Activity empty' data-cy='activity-empty-state' />
                 </div>
             :
                 activities.map( activity =>

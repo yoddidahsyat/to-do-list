@@ -21,11 +21,14 @@ const ActivityCard = ({data, deleteData, ...rest}) => {
     }
 
     return (
-        <div className="card-activity" {...rest}>
+        <div className="card-activity" data-cy='activity-item' {...rest}>
             <div className="body" role='button' onClick={()=>viewActivity(data.id)}>
-                <div className='title'>{data.title}</div>
+                <div className='title' data-cy='activity-item-title'>{data.title}</div>
             </div>
-            <div className="footer"><div>{moment(dateTime).format('D MMMM YYYY')}</div><img src={deleteIcon} alt='delete' role='button' onClick={showModal} /></div>
+            <div className="footer">
+                <div data-cy='activity-item-date'>{moment(dateTime).format('D MMMM YYYY')}</div>
+                <img src={deleteIcon} alt='delete' role='button' onClick={showModal} data-cy='activity-item-delete-button' />
+            </div>
             { show && <DeleteModal show={show} hide={hideModal} confirm={deleteData} type='activity' data={data} />}
         </div>
     )

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, Button, Form, Dropdown } from 'react-bootstrap'
+import { Modal, Button, Form, Dropdown, CloseButton } from 'react-bootstrap'
 import dropdownIcon from '../assets/images/tabler_chevron-down.svg'
 
 const priorities = [
@@ -10,7 +10,7 @@ const priorities = [
     {key: 'very-low', label: 'Very Low', color: 'purple'}
 ]
 
-const ListModal = ({show, hide, confirm, data}) => {
+const ListModal = ({show, hide, confirm, data, type}) => {
 
     const [form, setForm] = useState({
         title: '',
@@ -69,23 +69,24 @@ const ListModal = ({show, hide, confirm, data}) => {
 
 
     return (
-        <Modal show={show} onHide={hide} size='lg' centered>
-            <Modal.Header className='px-5' closeButton>
-                <Modal.Title className='fw-semibold fs-18'>{data ? 'Ubah' : 'Tambah'} List Item</Modal.Title>
+        <Modal show={show} onHide={hide} size='lg' centered data-cy={type}>
+            <Modal.Header className='px-5'>
+                <Modal.Title className='fw-semibold fs-18' data-cy={`${type}-title`}>{data ? 'Ubah' : 'Tambah'} List Item</Modal.Title>
+                <CloseButton onClick={hide} data-cy={`${type}-close-button`} />
             </Modal.Header>
             <Modal.Body className='px-5 pt-3'>
                 <Form>
                     <Form.Group className='my-3' controlId="listItem">
-                        <Form.Label className='fs-12 fw-semibold'>NAMA LIST ITEM</Form.Label>
-                        <Form.Control type="text" placeholder="Tambahkan nama list item" value={form.title} onChange={handleChangeTitle} />
+                        <Form.Label className='fs-12 fw-semibold' data-cy={`${type}-name-title`}>NAMA LIST ITEM</Form.Label>
+                        <Form.Control type="text" placeholder="Tambahkan nama list item" value={form.title} onChange={handleChangeTitle}  data-cy={`${type}-name-input`} />
                     </Form.Group>
                     <Form.Group className='my-3' controlId="priority">
-                        <Form.Label className='fs-12 fw-semibold'>PRIORITY</Form.Label>
+                        <Form.Label className='fs-12 fw-semibold' data-cy={`${type}-priority-title`}>PRIORITY</Form.Label>
                         <Dropdown variant='white' id="dropdown-item-button" onSelect={handleChangePriority}>
-                            <Dropdown.Toggle as={CustomToggle} />
+                            <Dropdown.Toggle as={CustomToggle} data-cy={`${type}-priority-dropdown`} />
                             <Dropdown.Menu>
                                 {priorities.map(({label, color, key}) => 
-                                    <Dropdown.Item as="button" key={key} eventKey={key} className='d-flex align-items-center'><div className={`icon-priority bg-${color}`} />{label}</Dropdown.Item>
+                                    <Dropdown.Item as="button" key={key} eventKey={key} className='d-flex align-items-center' data-cy={`${type}-priority-${key}`}><div className={`icon-priority bg-${color}`} />{label}</Dropdown.Item>
                                 )}
                             </Dropdown.Menu>
                         </Dropdown>
@@ -93,7 +94,7 @@ const ListModal = ({show, hide, confirm, data}) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer className='px-5'>
-                <Button variant='blue' className='rounded-pill px-4 fw-semibold' onClick={handleSave} disabled={form.title === ''}>Simpan</Button>
+                <Button variant='blue' className='rounded-pill px-4 fw-semibold' onClick={handleSave} disabled={form.title === ''} data-cy={`${type}-save-button`}>Simpan</Button>
             </Modal.Footer>
         </Modal>
     )

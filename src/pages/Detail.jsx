@@ -187,40 +187,40 @@ const Detail = () => {
             <div className="row">
                 <div className="col d-flex justify-content-between">
                     <div className='d-flex align-items-center py-1'>
-                        <img src={back} alt='back' role='button' onClick={goBack} />
+                        <img src={back} alt='back' role='button' onClick={goBack} data-cy='todo-back-button' />
                         {
-                            !onTitleChange ? <h1 className='fw-bold fs-36 mb-0 mx-3'>{title}</h1> :
+                            !onTitleChange ? <h1 className='fw-bold fs-36 mb-0 mx-3' data-cy='todo-title'>{title}</h1> :
                             <input value={title} className='input-title mx-3' onChange={handleChangeTitle} />
                         }
-                        <img src={edit} alt='edit' role='button' onClick={toggleChangeTitle} />
+                        <img src={edit} alt='edit' role='button' onClick={toggleChangeTitle} data-cy='todo-title-edit-button' />
                     </div>
-                    <AddButton onClick={handleAddItem} />
+                    <AddButton onClick={handleAddItem} data-cy='todo-add-button' />
                 </div>
             </div>
             <div className="row mt-5">
             { loading ? <Loading /> : 
             list.length < 1 ?
                 <div className="col text-center">
-                    <img src={empty} alt='Empty list' />
+                    <img src={empty} alt='Empty list' data-cy='todo-empty-state' />
                 </div>
             :
                 list.map( item => {
                     const checkedClass = item.is_active === 0 ? 'checked' : ''
                     const { color } = priorities.find(priority => priority.key === item.priority)
-                    const label = <><div className={`icon-priority-sm bg-${color}`} /><span className={checkedClass}>{item.title}</span></>
+                    const label = <><div className={`icon-priority-sm bg-${color}`} data-cy='todo-item-priority-indicator' /><span className={checkedClass} data-cy='todo-item-title'>{item.title}</span></>
                     return (
-                        <div className="card-list position-relative" key={item.id}>
-                            <Form.Check type='checkbox' id={item.id} key={item.id} label={label} className='fw-medium fs-18' onChange={() => handleCheckItem(item)} checked={!item.is_active} />
-                            <img src={editItemIcon} alt='edit item' className='text-lightgrey ms-3' role='button' onClick={() => handleEditItem(item)} />
-                            <img src={deleteIcon} alt='delete item' className='position-absolute end-0 me-4' role='button' onClick={() => handleDeleteItem(item)} />
+                        <div className="card-list position-relative" key={item.id} data-cy='todo-item'>
+                            <Form.Check type='checkbox' id={item.id} key={item.id} label={label} className='fw-medium fs-18' onChange={() => handleCheckItem(item)} checked={!item.is_active} data-cy='todo-item-checkbox' />
+                            <img src={editItemIcon} alt='edit item' className='text-lightgrey ms-3' role='button' onClick={() => handleEditItem(item)} data-cy='todo-item-edit-button' />
+                            <img src={deleteIcon} alt='delete item' className='position-absolute end-0 me-4' role='button' onClick={() => handleDeleteItem(item)} data-cy='todo-item-delete-button' />
                         </div>
                     )
                 })
             }
             </div>
             { listModalShow && item ?
-                <ListModal show={listModalShow} data={item} hide={hideListModal} confirm={editItem} />
-                : <ListModal show={listModalShow} hide={hideListModal} confirm={addItem} />
+                <ListModal show={listModalShow} data={item} hide={hideListModal} confirm={editItem} type='modal-edit' />
+                : <ListModal show={listModalShow} hide={hideListModal} confirm={addItem} type='modal-add' />
             }
             { deleteModalShow && <DeleteModal show={deleteModalShow} confirm={deleteItem} hide={hideDeleteModal} type='List Item' data={item} />}
             { alert && <AlertModal show={alert} hide={hideAlert} type='Item' /> }
