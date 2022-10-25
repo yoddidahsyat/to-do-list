@@ -53,7 +53,7 @@ const ListModal = ({show, hide, confirm, data, type}) => {
     }
     
     const {label, color} = priorities.find(item => form.priority === item.key)
-    const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+    const PriorityDropdownToggle = React.forwardRef(({ children, onClick }, ref) => (
         <button
             className='btn btn-white ms-0'
             ref={ref}
@@ -93,7 +93,7 @@ const ListModal = ({show, hide, confirm, data, type}) => {
                     <Form.Group className='my-3' controlId="priority">
                         <Form.Label className='fs-12 fw-semibold' data-cy={`${type}-priority-title`}>PRIORITY</Form.Label>
                         <Dropdown variant='white' id="dropdown-item-button" onSelect={handleChangePriority}>
-                            <Dropdown.Toggle as={CustomToggle} />
+                            <Dropdown.Toggle as={PriorityDropdownToggle} />
                             <Dropdown.Menu>
                                 {priorities.map(({label, color, key}) => 
                                     <Dropdown.Item as="button" key={key} eventKey={key} className='d-flex align-items-center' data-cy={`${type}-priority-item`}><div className={`icon-priority bg-${color}`} />{label}</Dropdown.Item>

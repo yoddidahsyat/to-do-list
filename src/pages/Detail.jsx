@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import back from '../assets/images/todo-back-button.svg'
-import edit from '../assets/images/todo-title-edit-button.svg'
+import backIcon from '../assets/images/todo-back-button.svg'
+import editIcon from '../assets/images/todo-title-edit-button.svg'
 import editItemIcon from '../assets/images/todo-item-edit-button.svg'
 import deleteIcon from '../assets/images/activity-item-delete-button.svg'
+import sortIcon from '../assets/images/todo-sort-button.svg'
 import empty from '../assets/images/todo-empty-state.svg'
 import AddButton from '../components/AddButton'
 import { useNavigate, useParams } from 'react-router-dom'
 import ListModal from '../components/ListModal'
-import { Form } from 'react-bootstrap'
+import { Button, Dropdown, Form } from 'react-bootstrap'
 import DeleteModal from '../components/DeleteModal'
 import Loading from '../components/Loading'
 import { API } from '../config/API'
@@ -32,24 +33,26 @@ const Detail = () => {
     const [deleteModalShow, setDeleteModalShow] = useState(false)
     const [loading, setLoading] = useState(false)
     const [alert, setAlert] = useState(false)
+    const [sort, setSort] = useState('latest')
     
-    // const getList = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const response = await API(`/todo-items?activity_group_id=${id}`);
-    //         console.log(response)
-    //         setList(response.data.data);
-    //         setLoading(false);
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // }
+    const getList = async () => {
+        try {
+            setLoading(true);
+            const response = await API(`/todo-items?activity_group_id=${activityId}`);
+            // console.log(response)
+            // setList(response.data.data);
+            sortList(sort, response.data.data)
+            setLoading(false);
+        } catch (err) {
+            console.log(err);
+        }
+        // sortList(sort)
+    }
     
     const getActivity = async () => {
         try {
             setLoading(true);
             const response = await API(`/activity-groups/${activityId}`);
-            console.log(response)
             setTitle(response.data.title)
             setList(response.data.todo_items);
             setLoading(false);
@@ -136,7 +139,8 @@ const Detail = () => {
             setLoading(true);
             const response = await API.post(`/todo-items/`, body);
             const {id, title, priority, activity_group_id, is_active} = response.data
-            setList([...list, {id, title, priority, activity_group_id, is_active}])
+            // setList([...list, {id, title, priority, activity_group_id, is_active}])
+            getList()
             setLoading(false);
         } catch (err) {
             console.log(err);
@@ -144,7 +148,7 @@ const Detail = () => {
     }
     
     const editItem = async ({title, priority, is_active}) => {
-        const newList = list.filter(listItem => listItem.id !== item.id)
+        // const newList = list.filter(listItem => listItem.id !== item.id)
         const body = {
             id: item.id,
             title,
@@ -155,7 +159,8 @@ const Detail = () => {
             setLoading(true);
             const response = await API.patch(`/todo-items/${item.id}`, body);
             const {id, title, priority, activity_group_id, is_active} = response.data
-            setList([...newList, {id, title, priority, activity_group_id, is_active}])
+            // setList([...newList, {id, title, priority, activity_group_id, is_active}])
+            getList()
             setLoading(false);
         } catch (err) {
             console.log(err);
@@ -163,11 +168,12 @@ const Detail = () => {
     }
     
     const deleteItem = async () => {
-        const newList = list.filter(listItem => listItem.id !== item.id)
+        // const newList = list.filter(listItem => listItem.id !== item.id)
         try {
             setLoading(true);
             await API.delete(`/todo-items/${item.id}`);
-            setList([...newList])
+            // setList([...newList])
+            getList()
             showAlert()
             setLoading(false);
         } catch (err) {
@@ -182,21 +188,78 @@ const Detail = () => {
     }
     const hideAlert = () => setAlert(false)
 
+    const SortButton = React.forwardRef(({ children, onClick }, ref) => (
+        <Button
+            size='sm'
+            variant='transparent'
+            className='p-0 me-3'
+            ref={ref}
+            onClick={e => {
+                e.preventDefault();
+                onClick(e);
+            }}
+            data-cy='todo-sort-button'
+            >
+            <img src={sortIcon} alt='sort_icon' />
+            {children}
+        </Button>
+    ));
 
+    const handleSort = (eventKey, event) => {
+        event.preventDefault()
+        setSort(eventKey)
+    }
+
+    const sortList = (sort, list) => {
+        switch(sort){
+            case 'az':
+                setList([...list].sort((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0))
+                break;
+            case 'za':
+                setList([...list].sort((a, b) => a.title > b.title ? -1 : a.title < b.title ? 1 : 0))
+                break;
+            case 'unfinished':
+                setList([...list].sort((a, b) => (a.is_active > b.is_active) ? -1 : (a.is_active < b.is_active) ? 1 : 0))
+                break;
+            case 'oldest':
+                setList([...list].sort((a, b) => a.id - b.id))
+                break;
+            case 'latest':
+            default:
+                setList([...list].sort((a, b) => b.id - a.id))
+                break;
+        }
+    }
+    
+    useEffect(()=>{
+        sortList(sort, list)
+    }, [sort])
 
     return (
         <div className='container py-5'>
             <div className="row">
                 <div className="col d-flex justify-content-between">
                     <div className='d-flex align-items-center py-1'>
-                        <img src={back} alt='back' role='button' onClick={goBack} data-cy='todo-back-button' />
+                        <img src={backIcon} alt='back' role='button' onClick={goBack} data-cy='todo-back-button' />
                         {
                             !onTitleChange ? <h1 className='fw-bold fs-36 mb-0 mx-3' data-cy='todo-title' onClick={toggleChangeTitle}>{title}</h1> :
                             <input id='todo-title-input' value={title} className='input-title mx-3' onChange={handleChangeTitle} onBlur={toggleChangeTitle} />
                         }
-                        <img src={edit} alt='edit' role='button' onClick={toggleChangeTitle} data-cy='todo-title-edit-button' />
+                        <img src={editIcon} alt='edit' role='button' onClick={toggleChangeTitle} data-cy='todo-title-edit-button' />
                     </div>
-                    <AddButton onClick={handleAddItem} data-cy='todo-add-button' />
+                    <div className='d-flex'>
+                        <Dropdown onSelect={handleSort}>
+                            <Dropdown.Toggle as={SortButton} />
+                            <Dropdown.Menu>
+                                <Dropdown.Item as="button" eventKey='latest' className='d-flex align-items-center' data-cy='sort-latest'>Terbaru</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='oldest' className='d-flex align-items-center' data-cy='sort-oldest'>Terlama</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='az' className='d-flex align-items-center' data-cy='sort-az'>A-Z</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='za' className='d-flex align-items-center' data-cy='sort-za'>Z-A</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='unfinished' className='d-flex align-items-center' data-cy='sort-unfinished'>Belum Selesai</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                        <AddButton onClick={handleAddItem} data-cy='todo-add-button' />
+                    </div>
                 </div>
             </div>
             <div className="row mt-5">
