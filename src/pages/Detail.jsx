@@ -5,6 +5,7 @@ import editItemIcon from '../assets/images/todo-item-edit-button.svg'
 import deleteIcon from '../assets/images/activity-item-delete-button.svg'
 import sortIcon from '../assets/images/todo-sort-button.svg'
 import empty from '../assets/images/todo-empty-state.svg'
+import checkIcon from '../assets/images/checklist.svg'
 import AddButton from '../components/AddButton'
 import { useNavigate, useParams } from 'react-router-dom'
 import ListModal from '../components/ListModal'
@@ -110,8 +111,7 @@ const Detail = () => {
         setDeleteModalShow(true)
     }
 
-    const handleCheckItem = async (item) => {
-        const newList = list.filter(listItem => listItem.id !== item.id)
+    const handleCheckItem = async (item, index) => {
         const body = {
             activity_group_id: item.activity_group_id,
             id: item.id,
@@ -122,8 +122,14 @@ const Detail = () => {
         // setList([...newList, {...body}])
         try {
             const response = await API.patch(`/todo-items/${item.id}`, body);
-            const {id, title, priority, activity_group_id, is_active} = response.data
-            setList([...newList, {id, title, priority, activity_group_id, is_active}])
+            // const {id, title, priority, activity_group_id, is_active} = response.data
+            if (response.status === 200) {
+                setList(prevState => {
+                    const newList = [...prevState]
+                    newList[index].is_active = body.is_active
+                    return newList
+                })
+            }
         } catch (err) {
             console.log(err);
         }
@@ -208,6 +214,7 @@ const Detail = () => {
     const handleSort = (eventKey, event) => {
         event.preventDefault()
         setSort(eventKey)
+        sortList(eventKey, list)
     }
 
     const sortList = (sort, list) => {
@@ -230,10 +237,8 @@ const Detail = () => {
                 break;
         }
     }
-    
-    useEffect(()=>{
-        sortList(sort, list)
-    }, [sort])
+
+    const Check = <img src={checkIcon} alt='checked' className='ms-3' />
 
     return (
         <div className='container py-5'>
@@ -251,11 +256,11 @@ const Detail = () => {
                         <Dropdown onSelect={handleSort}>
                             <Dropdown.Toggle as={SortButton} />
                             <Dropdown.Menu>
-                                <Dropdown.Item as="button" eventKey='latest' className='d-flex align-items-center' data-cy='sort-selection'>Terbaru</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='oldest' className='d-flex align-items-center' data-cy='sort-selection'>Terlama</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='az' className='d-flex align-items-center' data-cy='sort-selection'>A-Z</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='za' className='d-flex align-items-center' data-cy='sort-selection'>Z-A</Dropdown.Item>
-                                <Dropdown.Item as="button" eventKey='unfinished' className='d-flex align-items-center' data-cy='sort-selection'>Belum Selesai</Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='latest' className='d-flex align-items-center' data-cy='sort-selection'><div className='d-flex justify-content-between w-100'>Terbaru {sort === 'latest' && Check}</div></Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='oldest' className='d-flex align-items-center' data-cy='sort-selection'><div className='d-flex justify-content-between w-100'>Terlama {sort === 'oldest' && Check}</div></Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='az' className='d-flex align-items-center' data-cy='sort-selection'><div className='d-flex justify-content-between w-100'>A-Z {sort === 'az' && Check}</div></Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='za' className='d-flex align-items-center' data-cy='sort-selection'><div className='d-flex justify-content-between w-100'>Z-A {sort === 'za' && Check}</div></Dropdown.Item>
+                                <Dropdown.Item as="button" eventKey='unfinished' className='d-flex align-items-center' data-cy='sort-selection'><div className='d-flex justify-content-between w-100'>Belum Selesai {sort === 'unfinished' && Check}</div></Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                         <AddButton onClick={handleAddItem} data-cy='todo-add-button' />
@@ -269,13 +274,13 @@ const Detail = () => {
                     <img src={empty} alt='Empty list' data-cy='todo-empty-state' />
                 </div>
             :
-                list.map( item => {
+                list.map( (item, index) => {
                     const checkedClass = item.is_active === 0 ? 'checked' : ''
                     const { color } = priorities.find(priority => priority.key === item.priority)
                     const label = <><div className={`icon-priority-sm bg-${color}`} data-cy='todo-item-priority-indicator' /><span className={checkedClass} data-cy='todo-item-title'>{item.title}</span></>
                     return (
                         <div className="card-list position-relative" key={item.id} data-cy='todo-item'>
-                            <Form.Check type='checkbox' id={item.id} key={item.id} label={label} className='fw-medium fs-18' onChange={() => handleCheckItem(item)} checked={!item.is_active} data-cy='todo-item-checkbox' />
+                            <Form.Check type='checkbox' id={item.id} key={item.id} label={label} className='fw-medium fs-18' onChange={() => handleCheckItem(item, index)} checked={!item.is_active} data-cy='todo-item-checkbox' />
                             <img src={editItemIcon} alt='edit item' className='text-lightgrey ms-3' role='button' onClick={() => handleEditItem(item)} data-cy='todo-item-edit-button' />
                             <img src={deleteIcon} alt='delete item' className='position-absolute end-0 me-4' role='button' onClick={() => handleDeleteItem(item)} data-cy='todo-item-delete-button' />
                         </div>
